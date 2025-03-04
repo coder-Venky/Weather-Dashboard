@@ -1,0 +1,309 @@
+<!-- templates/weather.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ weather.city }} Weather - Weather Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.3/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        .weather-header {
+            background: url('https://source.unsplash.com/featured/?{{ weather.weather }}') center/cover no-repeat;
+            border-radius: 15px 15px 0 0;
+            height: 200px;
+            position: relative;
+        }
+        .weather-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 15px 15px 0 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            color: white;
+        }
+        .card {
+            border-radius: 15px;
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2);
+        }
+        .metric-card {
+            transition: all 0.3s;
+            height: 100%;
+        }
+        .metric-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 20px rgba(0, 0, 0, 0.1);
+        }
+        .weather-icon {
+            width: 100px;
+            height: 100px;
+        }
+        .temp-display {
+            font-size: 4rem;
+            font-weight: 300;
+            line-height: 1;
+        }
+        .forecast-day {
+            transition: all 0.3s;
+        }
+        .forecast-day:hover {
+            transform: scale(1.03);
+        }
+        .weather-time {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+        .btn-back {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            z-index: 10;
+        }
+        .unit-toggle {
+            cursor: pointer;
+            user-select: none;
+        }
+        .unit-toggle.active {
+            font-weight: bold;
+            color: #007bff;
+        }
+        .temp-unit {
+            display: none;
+        }
+        .temp-unit.active {
+            display: inline;
+        }
+        .main-weather {
+            font-size: 1.8rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        .location-display {
+            font-size: 2.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="card mb-4">
+                    <a href="/" class="btn btn-light btn-sm rounded-circle btn-back">
+                        <i class="fas fa-arrow-left"></i>
+                    </a>
+                    <div class="weather-header">
+                        <div class="weather-overlay">
+                            <div class="weather-time mb-1">Last updated: {{ weather.dt }}</div>
+                            <h1 class="location-display mb-2">
+                                {{ weather.city }}, {{ weather.country }}
+                            </h1>
+                            <div class="main-weather d-flex align-items-center">
+                                <img src="{{ weather.icon }}" alt="{{ weather.description }}" class="me-2">
+                                <span>{{ weather.description }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-4">
+                            <div class="col-md-6 d-flex justify-content-center align-items-center">
+                                <div class="text-center">
+                                    <div class="mb-2">
+                                        <span class="temp-display celsius active">{{ weather.temp_c }}</span>
+                                        <span class="temp-display fahrenheit">{{ weather.temp_f }}</span>
+                                        <span class="h3">°</span>
+                                        <div class="d-inline-block ms-1">
+                                            <span class="unit-toggle celsius active" data-unit="celsius">C</span>
+                                            <span class="mx-1">|</span>
+                                            <span class="unit-toggle fahrenheit" data-unit="fahrenheit">F</span>
+                                        </div>
+                                    </div>
+                                    <div class="text-muted">
+                                        Feels like:
+                                        <span class="temp-unit celsius active">{{ weather.feels_like_c }}°C</span>
+                                        <span class="temp-unit fahrenheit">{{ weather.feels_like_f }}°F</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="row g-3">
+                                    <div class="col-6">
+                                        <div class="card metric-card">
+                                            <div class="card-body text-center">
+                                                <i class="fas fa-tint text-primary mb-2"></i>
+                                                <h6 class="card-title">Humidity</h6>
+                                                <p class="card-text h4">{{ weather.humidity }}%</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="card metric-card">
+                                            <div class="card-body text-center">
+                                                <i class="fas fa-wind text-info mb-2"></i>
+                                                <h6 class="card-title">Wind</h6>
+                                                <p class="card-text h4">{{ weather.wind_speed }} m/s</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="card metric-card">
+                                            <div class="card-body text-center">
+                                                <i class="fas fa-eye text-success mb-2"></i>
+                                                <h6 class="card-title">Visibility</h6>
+                                                <p class="card-text h4">{{ weather.visibility }} km</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="card metric-card">
+                                            <div class="card-body text-center">
+                                                <i class="fas fa-compress-alt text-warning mb-2"></i>
+                                                <h6 class="card-title">Pressure</h6>
+                                                <p class="card-text h4">{{ weather.pressure }} hPa</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <div class="card h-100">
+                                    <div class="card-body">
+                                        <h5 class="card-title"><i class="fas fa-sun me-2 text-warning"></i>Sun Schedule</h5>
+                                        <div class="d-flex justify-content-between mt-4">
+                                            <div class="text-center">
+                                                <i class="fas fa-sunrise text-warning mb-2 h4"></i>
+                                                <h6>Sunrise</h6>
+                                                <p class="mb-0 h5">{{ weather.sunrise }}</p>
+                                            </div>
+                                            <div class="text-center">
+                                                <i class="fas fa-sunset text-danger mb-2 h4"></i>
+                                                <h6>Sunset</h6>
+                                                <p class="mb-0 h5">{{ weather.sunset }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card h-100">
+                                    <div class="card-body">
+                                        <h5 class="card-title">
+                                            <i class="fas fa-cloud me-2 text-primary"></i>Cloud & Wind
+                                        </h5>
+                                        <div class="row mt-4">
+                                            <div class="col-6 text-center">
+                                                <i class="fas fa-cloud text-primary mb-2 h4"></i>
+                                                <h6>Cloud Cover</h6>
+                                                <p class="mb-0 h5">{{ weather.clouds }}%</p>
+                                            </div>
+                                            <div class="col-6 text-center">
+                                                <i class="fas fa-location-arrow text-info mb-2 h4"></i>
+                                                <h6>Wind Direction</h6>
+                                                <p class="mb-0 h5">{{ weather.wind_deg }}°</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 5-Day Forecast -->
+                        <h4 class="mb-3"><i class="fas fa-calendar-alt me-2"></i>5-Day Forecast</h4>
+                        <div class="row g-3">
+                            {% for day in forecast %}
+                                <div class="col">
+                                    <div class="card forecast-day text-center">
+                                        <div class="card-body p-2">
+                                            <h6 class="mb-2">{{ day.date }}</h6>
+                                            <img src="{{ day.icon }}" alt="{{ day.description }}" width="50" height="50">
+                                            <p class="mb-2">{{ day.description }}</p>
+                                            <h5>
+                                                <span class="temp-unit celsius active">{{ day.temp_c }}°C</span>
+                                                <span class="temp-unit fahrenheit">{{ day.temp_f }}°F</span>
+                                            </h5>
+                                            <div class="small text-muted">
+                                                <span><i class="fas fa-tint me-1 text-primary"></i>{{ day.humidity }}%</span>
+                                                <span class="ms-2"><i class="fas fa-wind me-1 text-info"></i>{{ day.wind_speed }} m/s</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.3/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Temperature unit toggle
+        document.addEventListener('DOMContentLoaded', function() {
+            const celsiusToggles = document.querySelectorAll('.unit-toggle.celsius');
+            const fahrenheitToggles = document.querySelectorAll('.unit-toggle.fahrenheit');
+            const celsiusUnits = document.querySelectorAll('.temp-unit.celsius');
+            const fahrenheitUnits = document.querySelectorAll('.temp-unit.fahrenheit');
+            const celsiusDisplay = document.querySelector('.temp-display.celsius');
+            const fahrenheitDisplay = document.querySelector('.temp-display.fahrenheit');
+
+            function setActiveUnit(unit) {
+                if (unit === 'celsius') {
+                    // Update toggles
+                    celsiusToggles.forEach(toggle => toggle.classList.add('active'));
+                    fahrenheitToggles.forEach(toggle => toggle.classList.remove('active'));
+
+                    // Update units display
+                    celsiusUnits.forEach(el => el.classList.add('active'));
+                    fahrenheitUnits.forEach(el => el.classList.remove('active'));
+
+                    // Update main temperature display
+                    celsiusDisplay.classList.add('active');
+                    fahrenheitDisplay.classList.remove('active');
+                } else {
+                    // Update toggles
+                    celsiusToggles.forEach(toggle => toggle.classList.remove('active'));
+                    fahrenheitToggles.forEach(toggle => toggle.classList.add('active'));
+
+                    // Update units display
+                    celsiusUnits.forEach(el => el.classList.remove('active'));
+                    fahrenheitUnits.forEach(el => el.classList.add('active'));
+
+                    // Update main temperature display
+                    celsiusDisplay.classList.remove('active');
+                    fahrenheitDisplay.classList.add('active');
+                }
+
+                // Save preference
+                localStorage.setItem('tempUnit', unit);
+            }
+
+            // Set initial state based on saved preference
+            const savedUnit = localStorage.getItem('tempUnit') || 'celsius';
+            setActiveUnit(savedUnit);
+
+            // Add event listeners
+            celsiusToggles.forEach(toggle => {
+                toggle.addEventListener('click', () => setActiveUnit('celsius'));
+            });
+
+            fahrenheitToggles.forEach(toggle => {
+                toggle.addEventListener('click', () => setActiveUnit('fahrenheit'));
+            });
+        });
+    </script>
+</body>
+</html>
